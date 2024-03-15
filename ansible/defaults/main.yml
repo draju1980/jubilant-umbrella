@@ -1,0 +1,5 @@
+  # Define allowed services
+  allowed_services:
+    - ssh
+    - http
+    - https

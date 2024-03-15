@@ -1,0 +1,82 @@
+---
+# Import Fluentd public key
+- name: Import Fluentd public key
+  ansible.builtin.apt_key:
+    url: "https://packages.treasuredata.com/GPG-KEY-td-agent"
+
+
+# Add Fluentd repository
+- name: Add Fluentd repository
+  ansible.builtin.apt_repository:
+    repo: "deb http://packages.treasuredata.com/4/ubuntu/{{ ansible_distribution_release }}/ {{ ansible_distribution_release }} contrib"
+    update_cache: yes
+
+# Install td-agent package
+- name: Install Fluentd
+  ansible.builtin.apt:
+    name: td-agent
+    state: present
+
+# # Install Fluentd plugins
+# - name: Install Fluentd plugins
+#   ansible.builtin.command: /usr/sbin/td-agent-gem install fluent-plugin-elasticsearch
+
+# # Install Fluentd plugins
+# - name: Install Fluentd plugins
+#   ansible.builtin.command: /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter
+
+
+# # Install Fluentd plugins
+# - name: Install Fluentd plugins
+#   ansible.builtin.command: /usr/sbin/td-agent-gem install fluent-plugin-ua-parser
+
+# Grant td-agent user permission to read Nginx logs
+- name: Change permissions of /var/log/nginx/
+  ansible.builtin.file:
+    path: /var/log/nginx/
+    state: directory
+    owner: td-agent
+    group: td-agent
+    mode: '0755'
+
+# Copy td-agent configuration file
+- name: Copy Fluentd configuration file
+  copy:
+    src: ../files/td-agent.conf
+    dest: /etc/td-agent/td-agent.conf
+    owner: root
+    group: root
+    mode: 0644
+
+# Copy denylist.txt file
+- name: Copy denylist.txt file
+  copy:
+    src: ../files/denylist.txt
+    dest: /etc/td-agent/denylist.txt
+
+# restart td-agent service
+- name: Restart Fluentd to apply new configuration
+  systemd:
+    name: td-agent
+    state: restarted
+
+# Install logrotate package 
+- name: Install logrotate package
+  apt:
+    name: logrotate
+    state: present
+
+# Copy logrotate config file
+- name: Copy logrotate config file
+  copy:
+    src: ../files/logrotate.conf
+    dest: /etc/logrotate.d/nginx
+    owner: root
+    group: root
+    mode: 0644
+
+# Reload Nginx service for logrotate to take effect
+- name: Reload Nginx service
+  service:
+    name: nginx
+    state: restarted

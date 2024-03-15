@@ -1,85 +1,26 @@
 ---
 - name: Install and configure Nginx web server with Fluentd
-  hosts: all
   become: true
-
+  hosts: all
   tasks:
-    # Ensure Nginx is installed
-    - name: Install Nginx
-      apt:
-        name: nginx
-        state: present
-
-    # Configure Nginx to serve a simple "Hello, World!" HTML page
-    - name: Create HTML file
-      copy:
-        content: "<html><body><h1>Hello, World!</h1></body></html>"
-        dest: /var/www/html/index.html
-
-    # Start Nginx service
-    - name: Start Nginx service
-      service:
-        name: nginx
-        state: started
-        enabled: yes
-
-    # Task 4: Secure the server by disabling unnecessary services and configuring a basic firewall using UFW
-    - name: Disable unnecessary services
-      systemd:
-        name: "{{ item }}"
-        enabled: no
-        state: stopped
-      loop:
-        - apache2
-        - mysql
-
-    - name: Install Uncomplicated Firewall (UFW)
-      apt:
-        name: ufw
-        state: present
-
-    - name: Allow SSH through UFW
-      ufw:
-        rule: allow
-        port: 22
-        proto: tcp
-
-    - name: Allow HTTP through UFW
-      ufw:
-        rule: allow
-        port: 80
-        proto: tcp
-
-    - name: Enable UFW
-      ufw:
-        state: enabled
-
-    # Task 5: Install Fluentd
-    - name: Install Fluentd
-      apt:
-        name: fluentd
-        state: present
-
-    # Task 6: Configure Fluentd to collect and process logs from Nginx access and error logs
-    - name: Configure Fluentd for Nginx logs
-      copy:
-        src: fluentd/nginx.conf
-        dest: /etc/fluentd/conf.d/nginx.conf
-
-    # Task 7: Install denylist.txt
-    - name: Copy denylist.txt
-      copy:
-        src: denylist.txt
-        dest: /etc/fluentd/denylist.txt
-
-    # Task 8: Route filtered logs to a separate file called "denylist_audit.log"
-    - name: Configure Fluentd filter for deny list
-      copy:
-        src: fluentd/filter.conf
-        dest: /etc/fluentd/conf.d/filter.conf
-
-    # Task 9: Restart Fluentd service
-    - name: Restart Fluentd service
-      service:
-        name: td-agent
-        state: restarted
+    # importing the variables
+    - name: Include defaults variables
+      ansible.builtin.include_vars:
+        file: ../defaults/main.yml
+  
+    # updating the apt cache
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+  
+    # importing the firewall installation task
+    - import_tasks: firewall.yml
+      tags: firewall
+    
+    # importing the nginx installation task
+    - import_tasks: nginx.yml
+      tags: nginx
+    
+    # importing the fluentd installation task
+    - import_tasks: fluentd.yml
+      tags: fluentd

@@ -1,6 +1,7 @@
-How to run this Playbook
+**How to run this Playbook**
 ==============
 To execute the Ansible playbook on the target Linux box, follow these steps:
+When running Ansible tasks on a remote node, ensure to update the inventory file with the remote node's IP address and authentication details.
 
 1.	Login to the Linux Box:
 SSH into the Linux box where you want to execute the Ansible playbook.
@@ -39,4 +40,4 @@ Run the Ansible playbook using the inventory file:
 ansible-playbook -i inventory.ini tasks/main.yml
 ```
 
-When running Ansible tasks on a remote node, ensure to update the inventory file with the remote node's IP address and authentication details.
+

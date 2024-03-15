@@ -1,0 +1,8 @@
+terraform {
+  backend "s3" {
+    bucket         = "myorg-terraform-states"
+    key            = "myapp/tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "TableName"
+  }
+}

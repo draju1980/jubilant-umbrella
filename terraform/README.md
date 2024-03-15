@@ -1,4 +1,4 @@
-** To deploy an NGINX node on AWS using Terraform, follow these steps: **
+**To deploy an NGINX node on AWS using Terraform, follow these steps:**
 
 Step 1: Clone this repository https://github.com/draju1980/jubilant-umbrella.git.
 
@@ -112,7 +112,7 @@ You can easily customize these parameters according to your specific requirement
 
 In the variables.tf file, you'll find the declarations of variables used in the deployment configuration. Adjust these variables as needed to tailor the deployment to your environment.
 
-In the outputs.tf file, you'll find the configurations for outputting important information after the deployment, such as URLs or IP addresses. Modify these outputs according to the information you need to extract from the deployment.
+In the outputs.tf file, you'll find the configurations for outputting important information after the deployment, such as nginx_url or ssh_command. Modify these outputs according to the information you need to extract from the deployment.
 
 Feel free to update any other files in the folder to match your requirements. 
 
@@ -133,13 +133,20 @@ Since I'm using local Terraform state, all the state and SSH key files reside in
 
 In this structure:
 
-README.md contains documentation or instructions related to the Terraform configuration.
-main.tf is the main Terraform configuration file.
-variables.tf defines the input variables used in the Terraform configuration.
-outputs.tf defines the output values produced by the Terraform configuration.
-terraform-ssh-key is the directory containing SSH key files used for authentication.
-terraform.tfstate stores the current state of the infrastructure managed by Terraform.
-terraform.tfstate.backup is a backup of the previous state file.
+**README.md** contains documentation or instructions related to the Terraform configuration.
+
+**main.tf** is the main Terraform configuration file.
+
+**variables.tf** defines the input variables used in the Terraform configuration.
+
+**outputs.tf** defines the output values produced by the Terraform configuration.
+
+**terraform-ssh-key** is the directory containing SSH key files used for authentication.
+
+**terraform.tfstate** stores the current state of the infrastructure managed by Terraform.
+
+**terraform.tfstate.backup** is a backup of the previous state file.
+
 This organization ensures that all necessary files for the Terraform project are contained within the same directory for easy management and deployment. Adjustments can be made based on specific project requirements.
 
 --------------------------------------------------------------------------------
@@ -158,3 +165,19 @@ ssh -i terraform-ssh-key ubuntu@54.170.53.222
 ```
 
 This ensures convenient access to both the Nginx site and the NGINX node via their respective outputs.
+
+--------------------------------------------------------------------------------
+
+For smooth management of Terraform states, using a remote backend like Amazon S3 is much better than keeping it locally. Here's why:
+
+**Security:** S3 ensures top-notch security, safeguarding your state files.
+
+**Accessibility:** With S3, your team can access state files from anywhere, promoting collaboration.
+
+**Versioning:** S3's versioning feature lets you track changes and revert if needed, ensuring peace of mind.
+
+**Locking:** By combining DynamoDB with S3, Terraform can prevent conflicts when multiple users modify the state simultaneously.
+
+To set up, you simply need to specify S3 bucket details in your Terraform files, typically in a file named backend.tf. You can find example backend configuration code in **terraform/backend.example**.
+
+This setup offers a secure, scalable, and seamless solution, perfect for today's infrastructure workflows.

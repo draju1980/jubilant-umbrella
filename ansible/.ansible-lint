@@ -1,0 +1,13 @@
+kinds:
+  # order matters  (first match wins)
+  - yaml: "**/files/**/*.{yml,yaml}"
+  - vars: "**/defaults/**/*.{yml,yaml}"
+  - vars: "**/host_vars/**/*.{yml,yaml}"
+  - vars: "**/group_vars/**/*.{yml,yaml}"
+  - vars: "**/vars/**/*.{yml,yaml}"
+  - meta: "**/meta/main.yml"
+  - tasks: "**/handlers/**/*.{yml,yaml}"
+  - tasks: "**/tasks/**/*.{yml,yaml}"
+  - playbook: "**/playbooks/**/*.{yml,yaml}"
+  - galaxy: "**/galaxy.yml"
+  - yaml: "**/*.{yml,yaml}"
